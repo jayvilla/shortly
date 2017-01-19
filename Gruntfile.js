@@ -14,18 +14,43 @@ module.exports = function(grunt) {
       }
     },
 
+    concat: {
+      options: {
+        separator: '\n// NEW PAGE\n',
+      },
+      dist: {
+        src: ['server-config.js', 'server.js', './app/*/*.js', './app/*.js', './lib/*.js', './public/client/*.js', './public/lib/*.js'],
+        dest: 'dist/build.js',
+      },
+    },
+
+    uglify: {
+      myTarget: {
+        files: {
+          './public/dist/output.min.js': ['dist/build.js']
+        }
+      }
+    }, 
+
+    gitpush: {
+      yourTarget: {
+        options: {
+          remote: 'live',
+          branch: 'master'
+        }
+      }
+    },
+
     nodemon: {
       dev: {
         script: 'server.js'
       }
     },
 
-    uglify: {
-    },
-
     eslint: {
       target: [
         // Add list of files to lint here
+        'server-config.js', 'server.js', './app/*/*.js', './app/*.js', './lib/*.js', './public/client/*.js', './public/lib/*.js'
       ]
     },
 
@@ -63,6 +88,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-shell');
   grunt.loadNpmTasks('grunt-nodemon');
+  grunt.loadNpmTasks('grunt-git');
 
   grunt.registerTask('server-dev', function (target) {
     grunt.task.run([ 'nodemon', 'watch' ]);
@@ -77,6 +103,11 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'test',
+    'eslint',
+    'concat',
+    'uglify',
+    'gitpush'
   ]);
 
   grunt.registerTask('upload', function(n) {
@@ -89,6 +120,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
+    'test',
+    'build',
+    'upload'
   ]);
 
 
