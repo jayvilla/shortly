@@ -103,7 +103,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('build', [
-    'test',
+    // 'test',
     'eslint',
     'concat',
     'uglify',

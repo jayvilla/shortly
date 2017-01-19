@@ -4,6 +4,23 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var util = require('./lib/utility');
+var mongoose = require('mongoose');
+// var models = require('./app/models');
+
+// var MongoClient = require('mongodb').MongoClient;
+// var assert = require('assert');
+
+var url = 'mongodb://127.0.0.1:27017/db';
+// // Use connect method to connect to the Server 
+// MongoClient.connect(url, function(err, db) {
+//   assert.equal(null, err);
+//   console.log("Connected correctly to server");
+ 
+//   db.close();
+// });
+
+mongoose.connect(url);
+
 
 var handler = require('./lib/request-handler');
 
@@ -34,6 +51,12 @@ app.get('/logout', handler.logoutUser);
 
 app.get('/signup', handler.signupUserForm);
 app.post('/signup', handler.signupUser);
+
+// app.get('/users', function(req, res) {
+//   mongoose.model('users').find(function(err, users) {
+//     res.send(users);
+//   });
+// });
 
 app.get('/*', handler.navToLink);
 

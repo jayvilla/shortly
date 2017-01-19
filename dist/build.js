@@ -4,6 +4,21 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var util = require('./lib/utility');
+var mongoose = require('mongoose');
+// var MongoClient = require('mongodb').MongoClient;
+// var assert = require('assert');
+
+var url = 'mongodb://127.0.0.1:27017/db';
+// // Use connect method to connect to the Server 
+// MongoClient.connect(url, function(err, db) {
+//   assert.equal(null, err);
+//   console.log("Connected correctly to server");
+ 
+//   db.close();
+// });
+
+mongoose.connect(url);
+
 
 var handler = require('./lib/request-handler');
 
@@ -35,6 +50,12 @@ app.get('/logout', handler.logoutUser);
 app.get('/signup', handler.signupUserForm);
 app.post('/signup', handler.signupUser);
 
+// app.get('/users', function(req, res) {
+//   mongoose.model('users').find(function(err, users) {
+//     res.send(users);
+//   });
+// });
+
 app.get('/*', handler.navToLink);
 
 module.exports = app;
@@ -49,122 +70,108 @@ app.listen(port);
 console.log('Server now listening on port ' + port);
 
 // NEW PAGE
-// NOTE: this file is not needed when using MongoDB
-var db = require('../config');
-var Link = require('../models/link');
+// // NOTE: this file is not needed when using MongoDB
+// var db = require('../config');
+// var Link = require('../models/link');
 
-var Links = new db.Collection();
+// var Links = new db.Collection();
 
-Links.model = Link;
+// Links.model = Link;
 
-module.exports = Links;
+// module.exports = Links;
 // NEW PAGE
 // NOTE: this file is not needed when using MongoDB
-var db = require('../config');
-var User = require('../models/user');
+// var db = require('../config');
+// var User = require('../models/user');
 
-var Users = new db.Collection();
+// var Users = new db.Collection();
 
-Users.model = User;
+// Users.model = User;
 
-module.exports = Users;
+// module.exports = Users;
 // NEW PAGE
-var db = require('../config');
 var crypto = require('crypto');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-var Link = db.Model.extend({
-  tableName: 'urls',
-  hasTimestamps: true,
-  defaults: {
-    visits: 0
-  },
-  initialize: function() {
-    this.on('creating', function(model, attrs, options) {
-      var shasum = crypto.createHash('sha1');
-      shasum.update(model.get('url'));
-      model.set('code', shasum.digest('hex').slice(0, 5));
-    });
-  }
+var urls = new Schema({
+  url:  String,
+  baseUrl: String,
+  code:   String,
+  title: String,
+  visits: Number
 });
 
-module.exports = Link;
+mongoose.model('Link', urls);
+
+// module.exports = urls;
 
 // NEW PAGE
-var db = require('../config');
 var bcrypt = require('bcrypt-nodejs');
 var Promise = require('bluebird');
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
-var User = db.Model.extend({
-  tableName: 'users',
-  hasTimestamps: true,
-  initialize: function() {
-    this.on('creating', this.hashPassword);
-  },
-  comparePassword: function(attemptedPassword, callback) {
-    bcrypt.compare(attemptedPassword, this.get('password'), function(err, isMatch) {
-      callback(isMatch);
-    });
-  },
-  hashPassword: function() {
-    var cipher = Promise.promisify(bcrypt.hash);
-    return cipher(this.get('password'), null, null).bind(this)
-      .then(function(hash) {
-        this.set('password', hash);
-      });
-  }
+// var User = mongoose.model('User', users);
+var users = new Schema({
+  username:  String,
+  password: String
 });
 
-module.exports = User;
+mongoose.model('User', users);
+
+// module.exports = User;
 
 // NEW PAGE
 var path = require('path');
-var knex = require('knex')({
-  client: 'sqlite3',
-  connection: {
-    filename: path.join(__dirname, '../db/shortly.sqlite')
-  },
-  useNullAsDefault: true
-});
-var db = require('bookshelf')(knex);
+// var knex = require('knex')({
+//   client: 'sqlite3',
+//   connection: {
+//     filename: path.join(__dirname, '../db/shortly.sqlite')
+//   },
+//   useNullAsDefault: true
+// });
+// var db = require('bookshelf')(knex);
 
-db.knex.schema.hasTable('urls').then(function(exists) {
-  if (!exists) {
-    db.knex.schema.createTable('urls', function (link) {
-      link.increments('id').primary();
-      link.string('url', 255);
-      link.string('baseUrl', 255);
-      link.string('code', 100);
-      link.string('title', 255);
-      link.integer('visits');
-      link.timestamps();
-    }).then(function (table) {
-      console.log('Created Table', table);
-    });
-  }
-});
+// db.knex.schema.hasTable('urls').then(function(exists) {
+//   if (!exists) {
+//     db.knex.schema.createTable('urls', function (link) {
+//       link.increments('id').primary();
+//       link.string('url', 255);
+//       link.string('baseUrl', 255);
+//       link.string('code', 100);
+//       link.string('title', 255);
+//       link.integer('visits');
+//       link.timestamps();
+//     }).then(function (table) {
+//       console.log('Created Table', table);
+//     });
+//   }
+// });
 
-db.knex.schema.hasTable('users').then(function(exists) {
-  if (!exists) {
-    db.knex.schema.createTable('users', function (user) {
-      user.increments('id').primary();
-      user.string('username', 100).unique();
-      user.string('password', 100);
-      user.timestamps();
-    }).then(function (table) {
-      console.log('Created Table', table);
-    });
-  }
-});
+// db.knex.schema.hasTable('users').then(function(exists) {
+//   if (!exists) {
+//     db.knex.schema.createTable('users', function (user) {
+//       user.increments('id').primary();
+//       user.string('username', 100).unique();
+//       user.string('password', 100);
+//       user.timestamps();
+//     }).then(function (table) {
+//       console.log('Created Table', table);
+//     });
+//   }
+// });
 
-module.exports = db;
+// module.exports.urls = urls;
+// module.exports.users = users;
 
 // NEW PAGE
 var request = require('request');
 var crypto = require('crypto');
 var bcrypt = require('bcrypt-nodejs');
 var util = require('../lib/utility');
+var mongoose = require('mongoose');
 
-var db = require('../app/config');
 var User = require('../app/models/user');
 var Link = require('../app/models/link');
 var Users = require('../app/collections/users');
