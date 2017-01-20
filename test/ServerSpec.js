@@ -10,6 +10,7 @@ var Link = require('../app/models/link');
 /////////////////////////////////////////////////////
 // NOTE: these tests are designed for mongo!
 /////////////////////////////////////////////////////
+
 describe('', function() {
 
   beforeEach(function(done) {
@@ -207,12 +208,21 @@ describe('', function() {
   describe('Account Login:', function() {
 
     beforeEach(function(done) {
-      new User({
+      var newUser = {
         'username': 'Phillip',
         'password': 'Phillip'
-      }).save(function() {
-        done();
-      });
+      };
+
+      User.collection.insert(newUser);
+
+      done();
+
+      // new User({
+      //   'username': 'Phillip',
+      //   'password': 'Phillip'
+      // }).save(function() {
+      //   done();
+      // });
     });
 
     it('Logs in existing users', function(done) {

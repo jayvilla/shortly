@@ -2,8 +2,6 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    concat: {
-    },
 
     mochaTest: {
       test: {
@@ -20,7 +18,7 @@ module.exports = function(grunt) {
       },
       dist: {
         src: ['server-config.js', 'server.js', './app/*/*.js', './app/*.js', './lib/*.js', './public/client/*.js', './public/lib/*.js'],
-        dest: 'dist/build.js',
+        dest: 'dist/build.js', 
       },
     },
 

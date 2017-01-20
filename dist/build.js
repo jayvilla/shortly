@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var util = require('./lib/utility');
 var mongoose = require('mongoose');
+// var models = require('./app/models');
+
 // var MongoClient = require('mongodb').MongoClient;
 // var assert = require('assert');
 

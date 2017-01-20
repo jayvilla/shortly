@@ -5,11 +5,11 @@ var Schema = mongoose.Schema;
 var urls = new Schema({
   url:  String,
   baseUrl: String,
-  code:   String,
-  title: String,
-  visits: Number
+  // code:   String,
+  // title: String,
+  // visits: Number
 });
 
-mongoose.model('Link', urls);
+var Link = mongoose.model('Link', urls);
 
-// module.exports = urls;
+module.exports = Link;
